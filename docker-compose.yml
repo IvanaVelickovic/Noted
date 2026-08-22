@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: noted-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: noted
+      POSTGRES_USER: noted_user
+      POSTGRES_PASSWORD: noted_user_0822_1653
+    ports:
+      - "5432:5432"
+    volumes:
+      - noted_pgdata:/var/lib/postgresql/data
+
+volumes:
+  noted_pgdata:
