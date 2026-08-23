@@ -4,7 +4,7 @@ services:
     container_name: noted-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: noted
+      POSTGRES_DB: noted_db
       POSTGRES_USER: noted_user
       POSTGRES_PASSWORD: noted_user_0822_1653
     ports:
