@@ -2,7 +2,9 @@ package com.Noted.controller;
 
 import com.Noted.dto.RegisterRequest;
 import com.Noted.model.User;
+import com.Noted.response.UserResponse;
 import com.Noted.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +22,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody RegisterRequest request){
-        User user = new User();
-        user.setEmail(request.email());
-        user.setName(request.name());
-        user.setPasswordHash(request.password());
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterRequest request){
+        User savedUser = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromEntity(savedUser));
     }
 }
