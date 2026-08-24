@@ -1,5 +1,6 @@
 package com.Noted.controller;
 
+import com.Noted.dto.LoginRequest;
 import com.Noted.dto.RegisterRequest;
 import com.Noted.model.User;
 import com.Noted.response.UserResponse;
@@ -25,5 +26,11 @@ public class UserController {
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterRequest request){
         User savedUser = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromEntity(savedUser));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> authenticateUser(@Valid @RequestBody LoginRequest request){
+        User loginUser = userService.authenticateUser(request);
+        return ResponseEntity.status(HttpStatus.OK).body(UserResponse.fromEntity(loginUser));
     }
 }

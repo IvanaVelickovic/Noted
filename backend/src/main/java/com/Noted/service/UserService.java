@@ -1,10 +1,12 @@
 package com.Noted.service;
 
 import com.Noted.config.SecurityConfig;
+import com.Noted.dto.LoginRequest;
 import com.Noted.dto.RegisterRequest;
 import com.Noted.exception.EmailAlreadyExistsException;
 import com.Noted.model.User;
 import com.Noted.repository.UserRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +29,19 @@ public class UserService {
         user.setName(request.name());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         return userRepository.save(user);
+    }
+
+    public User authenticateUser(LoginRequest request){
+        if (!userRepository.existsByEmail(request.email())){
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        User user = userRepository.findByEmail(request.email());
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())){
+            System.out.println("PASSWORD MISMATCH");
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        return user;
     }
 }
