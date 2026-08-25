@@ -3,6 +3,7 @@ package com.Noted.controller;
 import com.Noted.dto.LoginRequest;
 import com.Noted.dto.RegisterRequest;
 import com.Noted.model.User;
+import com.Noted.response.LoginResponse;
 import com.Noted.response.UserResponse;
 import com.Noted.service.UserService;
 import jakarta.validation.Valid;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> authenticateUser(@Valid @RequestBody LoginRequest request){
-        User loginUser = userService.authenticateUser(request);
-        return ResponseEntity.status(HttpStatus.OK).body(UserResponse.fromEntity(loginUser));
+    public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest request){
+        LoginResponse loginResponse = userService.authenticateUser(request);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
 }

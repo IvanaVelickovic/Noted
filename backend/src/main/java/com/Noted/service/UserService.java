@@ -6,7 +6,11 @@ import com.Noted.dto.RegisterRequest;
 import com.Noted.exception.EmailAlreadyExistsException;
 import com.Noted.model.User;
 import com.Noted.repository.UserRepository;
+import com.Noted.response.LoginResponse;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +18,15 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager, JWTService jwtService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public User createUser(RegisterRequest request){
@@ -31,17 +40,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User authenticateUser(LoginRequest request){
-        if (!userRepository.existsByEmail(request.email())){
+    public LoginResponse authenticateUser(LoginRequest request){
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+        } catch (AuthenticationException ex){
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        User user = userRepository.findByEmail(request.email());
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())){
-            System.out.println("PASSWORD MISMATCH");
-            throw new BadCredentialsException("Invalid email or password");
-        }
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
-        return user;
+        return jwtService.issueTokensFor(user);
     }
 }
