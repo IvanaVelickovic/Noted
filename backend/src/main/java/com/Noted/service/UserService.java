@@ -53,4 +53,8 @@ public class UserService {
 
         return jwtService.issueTokensFor(user);
     }
+
+    public String refreshAccessToken(String refreshToken){
+        return jwtService.refreshAccessToken(refreshToken);
+    }
 }

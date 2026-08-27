@@ -5,10 +5,12 @@ import com.Noted.model.User;
 import com.Noted.repository.RefreshTokenRepository;
 import com.Noted.response.LoginResponse;
 import com.Noted.response.UserResponse;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -16,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.function.Function;
 
 @Service
 public class JWTService {
@@ -63,4 +66,51 @@ public class JWTService {
     private SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
+
+    public String extractEmail(String token){
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
+        final Claims claims = extractAllClaims(token);
+        return claimResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token){
+        return Jwts
+                .parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails){
+        final String email = extractEmail(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token){
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token){
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String refreshAccessToken(String refreshToken){
+        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
+
+        if(storedToken.isRevoked()){
+            throw new BadCredentialsException("Refresh token has been revoked");
+        }
+
+        if(storedToken.getExpiresAt().isBefore(Instant.now())){
+            throw new BadCredentialsException("Refresh token has expired");
+        }
+
+        return generateAccessToken(storedToken.getUser());
+    }
+
 }
