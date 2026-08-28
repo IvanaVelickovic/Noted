@@ -8,5 +8,5 @@ CREATE TABLE notes(
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL DEFAULT '',
     user_id BIGINT NOT NULL REFERENCES users(id),
-    delete BOOLEAN DEFAULT false
+    deleted BOOLEAN DEFAULT false
 )

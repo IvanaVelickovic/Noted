@@ -2,22 +2,19 @@ package com.Noted.controller;
 
 import com.Noted.dto.CreateNote;
 import com.Noted.model.Note;
-import com.Noted.model.User;
-import com.Noted.repository.UserRepository;
 import com.Noted.response.NoteBasicInfo;
-import com.Noted.service.JWTService;
+import com.Noted.response.NoteResponse;
 import com.Noted.service.NoteService;
-import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RequestMapping("/notes")
 @RestController
 public class NoteController {
 
@@ -27,12 +24,45 @@ public class NoteController {
         this.noteService = noteService;
     }
 
-    @PostMapping("/create-note")
+    @PostMapping("/create")
     public ResponseEntity<NoteBasicInfo> createNote(@Valid @RequestBody CreateNote newNote,
                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
 
-        Note savedNote = noteService.createNote(newNote, authHeader);
+        Note savedNote = noteService.createNote(newNote, authHeader.substring(7));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(NoteBasicInfo.fromEntity(savedNote));
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<NoteBasicInfo>> getAllNotes(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+
+        List<NoteBasicInfo> notes = noteService.getAllNotes(authHeader.substring(7));
+
+        return ResponseEntity.ok(notes);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<NoteResponse> getNoteById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                    @PathVariable Long id){
+        Note note = noteService.getNoteById(authHeader.substring(7), id);
+
+        return ResponseEntity.ok(NoteResponse.fromEntity(note));
+    }
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<NoteBasicInfo> updateNote(@Valid @RequestBody CreateNote note,
+                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                    @PathVariable Long id){
+        Note updatedNote = noteService.updateNote(note, authHeader.substring(7), id);
+
+        return ResponseEntity.ok(NoteBasicInfo.fromEntity(updatedNote));
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteNote(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                    @PathVariable Long id){
+        noteService.deleteNote(authHeader.substring(7), id);
+
+        return ResponseEntity.noContent().build();
     }
 }

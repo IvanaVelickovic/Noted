@@ -7,6 +7,7 @@ import com.Noted.exception.EmailAlreadyExistsException;
 import com.Noted.model.User;
 import com.Noted.repository.UserRepository;
 import com.Noted.response.LoginResponse;
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,5 +61,19 @@ public class UserService {
 
     public void logout(String refreshToken){
         jwtService.revokeRefreshToken(refreshToken);
+    }
+
+    public User getUserFromToken(String token){
+        String email;
+        try{
+            email = jwtService.extractEmail(token);
+        } catch(JwtException ex){
+            throw new BadCredentialsException("Couldn't extract email from the token");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadCredentialsException("Couldn't find the user with email: " + email));
+
+        return user;
     }
 }

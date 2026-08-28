@@ -29,7 +29,7 @@ public class Note {
     private String title;
 
     @Column(nullable = false)
-    private boolean delete = false;
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
