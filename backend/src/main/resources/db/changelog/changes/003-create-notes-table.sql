@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset ivana:1
+--changeset ivana:3
 
 CREATE TABLE notes(
     id BIGSERIAL PRIMARY KEY,

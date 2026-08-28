@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset ivana:1
+--changeset ivana:2
 
 CREATE TABLE refresh_tokens(
     id BIGSERIAL PRIMARY KEY,
