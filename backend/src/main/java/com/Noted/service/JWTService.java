@@ -35,6 +35,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .claim("userId", user.getId())
+                .claim("type", "access")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000)) //15 minutes
                 .signWith(getSigningKey())
@@ -44,6 +45,7 @@ public class JWTService {
     public String generateRefreshToken(User user){
         String token = Jwts.builder()
                 .subject(user.getEmail())
+                .claim("type", "refresh")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000)) //7 days
                 .signWith(getSigningKey())
@@ -87,7 +89,9 @@ public class JWTService {
 
     public boolean validateToken(String token, UserDetails userDetails){
         final String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String type = extractTokenType(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token)
+                && "access".equals(type));
     }
 
     private boolean isTokenExpired(String token){
@@ -99,6 +103,11 @@ public class JWTService {
     }
 
     public String refreshAccessToken(String refreshToken){
+        String type = extractTokenType(refreshToken);
+        if(!"refresh".equals(type)){
+            throw new BadCredentialsException("Invalid token");
+        }
+
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
 
@@ -111,6 +120,18 @@ public class JWTService {
         }
 
         return generateAccessToken(storedToken.getUser());
+    }
+
+    public void revokeRefreshToken(String refreshToken){
+        RefreshToken savedRefreshToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new BadCredentialsException("Refresh token not found"));
+
+        savedRefreshToken.setRevoked(true);
+        refreshTokenRepository.save(savedRefreshToken);
+    }
+
+    public String extractTokenType(String token) {
+        return extractClaim(token, claims -> claims.get("type", String.class));
     }
 
 }

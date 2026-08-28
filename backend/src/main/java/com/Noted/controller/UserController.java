@@ -3,7 +3,6 @@ package com.Noted.controller;
 import com.Noted.dto.LoginRequest;
 import com.Noted.dto.RefreshRequest;
 import com.Noted.dto.RegisterRequest;
-import com.Noted.model.RefreshToken;
 import com.Noted.model.User;
 import com.Noted.response.LoginResponse;
 import com.Noted.response.UserResponse;
@@ -40,5 +39,11 @@ public class UserController {
     public ResponseEntity<Map<String, String>> refresh(@RequestBody RefreshRequest request){
         String newAccessToken = userService.refreshAccessToken(request.refreshToken());
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody RefreshRequest request){
+        userService.logout(request.refreshToken());
+        return ResponseEntity.noContent().build();
     }
 }

@@ -57,4 +57,8 @@ public class UserService {
     public String refreshAccessToken(String refreshToken){
         return jwtService.refreshAccessToken(refreshToken);
     }
+
+    public void logout(String refreshToken){
+        jwtService.revokeRefreshToken(refreshToken);
+    }
 }
