@@ -5,16 +5,10 @@ import com.Noted.exception.NoteNotFoundException;
 import com.Noted.model.Note;
 import com.Noted.model.User;
 import com.Noted.repository.NoteRepository;
-import com.Noted.repository.UserRepository;
 import com.Noted.response.NoteBasicInfo;
-import io.jsonwebtoken.JwtException;
-import jakarta.validation.Valid;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +17,12 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
     private final UserService userService;
+    private final CategoryService categoryService;
 
-    public NoteService(NoteRepository noteRepository, UserService userService){
+    public NoteService(NoteRepository noteRepository, UserService userService, CategoryService categoryService){
         this.noteRepository = noteRepository;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     public Note createNote(CreateNote createNote, String token){
@@ -60,7 +56,7 @@ public class NoteService {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new NoteNotFoundException("Note with that id cannot be found."));
 
-        if(note.getUser().getId() != user.getId()){
+        if(!note.getUser().getId().equals(user.getId())){
             throw new NoteNotFoundException("Note with that id cannot be found.");
         }
 
@@ -69,14 +65,23 @@ public class NoteService {
         }
 
         return note;
-
     }
 
     public Note updateNote(CreateNote updatedNote, String token, Long noteId) {
         Note note = getNoteById(token, noteId);
 
-        note.setTitle(updatedNote.title());
-        note.setBody(updatedNote.body());
+        if(updatedNote.title() != null){
+            note.setTitle(updatedNote.title());
+        }
+
+        if(updatedNote.body() != null){
+            note.setBody(updatedNote.body());
+        }
+
+        if(updatedNote.categoryId() != null){
+            note.setCategory(categoryService.getCategoryById(token, updatedNote.categoryId()));
+        }
+
         note.setLastEdited(LocalDateTime.now());
 
         noteRepository.save(note);
@@ -91,5 +96,17 @@ public class NoteService {
         note.setLastEdited(LocalDateTime.now());
 
         noteRepository.save(note);
+    }
+
+    public List<NoteBasicInfo> getAllNotesByCategory(String token, Long categoryId){
+        User user = userService.getUserFromToken(token);
+
+        categoryService.getCategoryById(token, categoryId);
+
+        List<Note> notes = noteRepository.findAllByCategoryIdAndUserAndDeletedFalse(categoryId, user);
+
+        return notes.stream()
+                .map(NoteBasicInfo::fromEntity)
+                .collect(Collectors.toList());
     }
 }

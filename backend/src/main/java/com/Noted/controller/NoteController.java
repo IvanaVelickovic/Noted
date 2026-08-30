@@ -6,7 +6,6 @@ import com.Noted.response.NoteBasicInfo;
 import com.Noted.response.NoteResponse;
 import com.Noted.service.NoteService;
 import jakarta.validation.Valid;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +48,7 @@ public class NoteController {
         return ResponseEntity.ok(NoteResponse.fromEntity(note));
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<NoteBasicInfo> updateNote(@Valid @RequestBody CreateNote note,
                                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                     @PathVariable Long id){
@@ -58,11 +57,19 @@ public class NoteController {
         return ResponseEntity.ok(NoteBasicInfo.fromEntity(updatedNote));
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteNote(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                     @PathVariable Long id){
         noteService.deleteNote(authHeader.substring(7), id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{categoryId}/category")
+    public ResponseEntity<List<NoteBasicInfo>> listNotesByCategory(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                                   @PathVariable Long categoryId){
+        List<NoteBasicInfo> notes = noteService.getAllNotesByCategory(authHeader.substring(7), categoryId);
+
+        return ResponseEntity.ok(notes);
     }
 }
