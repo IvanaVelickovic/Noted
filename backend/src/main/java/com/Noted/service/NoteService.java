@@ -61,7 +61,7 @@ public class NoteService {
                 .orElseThrow(() -> new NoteNotFoundException("Note with that id cannot be found."));
 
         if(note.getUser().getId() != user.getId()){
-            throw new BadCredentialsException("You are not authorized to access this note.");
+            throw new NoteNotFoundException("Note with that id cannot be found.");
         }
 
         if(note.isDeleted()){

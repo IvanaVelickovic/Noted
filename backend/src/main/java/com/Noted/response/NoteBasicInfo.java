@@ -6,7 +6,7 @@ import com.Noted.model.User;
 import java.time.LocalDateTime;
 
 public record NoteBasicInfo(
-        Long noteId,
+        Long id,
         LocalDateTime createdAt,
         LocalDateTime lastEdited,
         String title
