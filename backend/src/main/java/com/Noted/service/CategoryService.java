@@ -5,6 +5,8 @@ import com.Noted.exception.NoteNotFoundException;
 import com.Noted.model.Category;
 import com.Noted.model.User;
 import com.Noted.repository.CategoryRepository;
+import com.Noted.repository.NoteRepository;
+import com.Noted.response.CategoryNoteCount;
 import com.Noted.response.CategoryResponse;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,12 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final NoteRepository noteRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, UserService userService) {
+    public CategoryService(CategoryRepository categoryRepository, UserService userService, NoteRepository noteRepository) {
         this.categoryRepository = categoryRepository;
         this.userService = userService;
+        this.noteRepository = noteRepository;
     }
 
     public Category addCategory(String token, String name){
@@ -37,7 +41,7 @@ public class CategoryService {
 
     }
 
-    public List<CategoryResponse> getAllNotes(String token) {
+    public List<CategoryResponse> getAllCategories(String token) {
         User user = userService.getUserFromToken(token);
         List<Category> categories = categoryRepository.findAllByUser(user);
 
@@ -63,19 +67,33 @@ public class CategoryService {
         User user = userService.getUserFromToken(token);
         Category category = getCategoryById(token, id);
 
-        category.setName(newName);
-        if(categoryRepository.existsByUserAndName(user, newName)){
+        if(categoryRepository.existsByUserAndNameAndIdNot(user, newName, id)){
             throw new CategoryAlreadyExistsException("You already have a category named: " + newName);
         }
+        category.setName(newName);
 
         return categoryRepository.save(category);
     }
 
     public void deleteCategory(String token, Long id){
-        User user = userService.getUserFromToken(token);
+        userService.getUserFromToken(token);
         Category category = getCategoryById(token, id);
 
         categoryRepository.deleteById(category.getId());
+
+    }
+
+    public List<CategoryNoteCount> getNoteCountByCategory(String token) {
+        User user = userService.getUserFromToken(token);
+        List<Category> categories = categoryRepository.findAllByUser(user);
+
+        return categories.stream()
+                .map(category -> new CategoryNoteCount(
+                        category.getId(),
+                        category.getName(),
+                        noteRepository.countByCategoryIdAndDeletedFalse(category.getId())
+                ))
+                .toList();
 
     }
 }

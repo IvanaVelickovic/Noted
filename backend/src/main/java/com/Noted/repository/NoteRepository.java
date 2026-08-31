@@ -9,4 +9,5 @@ import java.util.List;
 public interface NoteRepository extends JpaRepository<Note, Long> {
     List<Note> findAllByUserId(Long userId);
     List<Note> findAllByCategoryIdAndUserAndDeletedFalse(Long categoryId, User user);
+    long countByCategoryIdAndDeletedFalse(Long categoryId);
 }

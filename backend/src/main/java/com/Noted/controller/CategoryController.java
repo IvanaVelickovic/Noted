@@ -2,6 +2,7 @@ package com.Noted.controller;
 
 import com.Noted.dto.CategoryDTO;
 import com.Noted.model.Category;
+import com.Noted.response.CategoryNoteCount;
 import com.Noted.response.CategoryResponse;
 import com.Noted.service.CategoryService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class CategoryController {
 
     @GetMapping("/get-all")
     public ResponseEntity<List<CategoryResponse>> getAllCategories(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
-        List<CategoryResponse> categories = categoryService.getAllNotes(authHeader.substring(7));
+        List<CategoryResponse> categories = categoryService.getAllCategories(authHeader.substring(7));
 
         return ResponseEntity.ok(categories);
     }
@@ -54,5 +55,14 @@ public class CategoryController {
         categoryService.deleteCategory(authHeader.substring(7), id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/note-count")
+    public ResponseEntity<List<CategoryNoteCount>> getNoteCountByCategory(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+
+        List<CategoryNoteCount> categoryNoteCounts = categoryService.getNoteCountByCategory(authHeader.substring(7));
+
+        return ResponseEntity.ok(categoryNoteCounts);
+
     }
 }
