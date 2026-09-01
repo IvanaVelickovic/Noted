@@ -1,7 +1,9 @@
 package com.Noted.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record CreateNote(
-        String title,
-        String body,
+        @NotBlank String title,
+        @NotBlank String body,
         Long categoryId
 ) { }

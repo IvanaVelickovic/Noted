@@ -72,4 +72,15 @@ public class NoteController {
 
         return ResponseEntity.ok(notes);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<NoteBasicInfo>> searchNotes(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                           @RequestParam String query,
+                                                           @RequestParam(required = false) Long categoryId){
+
+        List<NoteBasicInfo> notes = noteService.getAllNotesByQuery(authHeader.substring(7), query, categoryId);
+
+        return ResponseEntity.ok(notes);
+
+    }
 }

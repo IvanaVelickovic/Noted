@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/changes/004-create-categories-table.sql
   - include:
       file: db/changelog/changes/005-add-category-id-to-notes.sql
+  - include:
+      file: db/changelog/changes/006-add-search-vector-to-notes.sql

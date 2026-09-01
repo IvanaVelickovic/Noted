@@ -109,4 +109,16 @@ public class NoteService {
                 .map(NoteBasicInfo::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public List<NoteBasicInfo> getAllNotesByQuery(String token, String query, Long categoryId) {
+        User user = userService.getUserFromToken(token);
+
+        List<Note> notes = noteRepository.searchNotes(user.getId(), query);
+
+        return notes.stream()
+                .filter(note -> categoryId == null ||
+                        (note.getCategory() != null && note.getCategory().getId().equals(categoryId)))
+                .map(NoteBasicInfo::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

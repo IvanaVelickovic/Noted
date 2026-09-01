@@ -15,7 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -167,7 +168,7 @@ class NoteIntegrationTest {
         String token = loginAndGetAccessToken(USER_A_EMAIL);
         Long noteId = createNoteAndGetId(token, "Original title", "original body");
 
-        mockMvc.perform(post("/notes/update/" + noteId)
+        mockMvc.perform(put("/notes/update/" + noteId)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Updated title\",\"body\":\"updated body\"}"))
@@ -181,7 +182,7 @@ class NoteIntegrationTest {
         String tokenB = loginAndGetAccessToken(USER_B_EMAIL);
         Long noteId = createNoteAndGetId(tokenA, "A's note", "body");
 
-        mockMvc.perform(post("/notes/update/" + noteId)
+        mockMvc.perform(put("/notes/update/" + noteId)
                         .header("Authorization", "Bearer " + tokenB)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Hijacked\",\"body\":\"hijacked body\"}"))
@@ -195,7 +196,7 @@ class NoteIntegrationTest {
         String token = loginAndGetAccessToken(USER_A_EMAIL);
         Long noteId = createNoteAndGetId(token, "To be deleted", "body");
 
-        mockMvc.perform(post("/notes/delete/" + noteId)
+        mockMvc.perform(delete("/notes/delete/" + noteId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
@@ -211,7 +212,7 @@ class NoteIntegrationTest {
         String tokenB = loginAndGetAccessToken(USER_B_EMAIL);
         Long noteId = createNoteAndGetId(tokenA, "A's note", "body");
 
-        mockMvc.perform(post("/notes/delete/" + noteId)
+        mockMvc.perform(delete("/notes/delete/" + noteId)
                         .header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
     }
