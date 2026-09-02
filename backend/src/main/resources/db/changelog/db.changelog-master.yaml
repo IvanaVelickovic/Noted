@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changes/005-add-category-id-to-notes.sql
   - include:
       file: db/changelog/changes/006-add-search-vector-to-notes.sql
+  - include:
+      file: db/changelog/changes/007-create-summary-jobs-table.sql

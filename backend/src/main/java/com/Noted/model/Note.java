@@ -22,7 +22,7 @@ public class Note {
     @Column(name = "last_edited", nullable = false)
     private LocalDateTime lastEdited;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String body;
 
     @Column(nullable = false)

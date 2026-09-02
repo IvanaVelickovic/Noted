@@ -4,13 +4,36 @@ services:
     container_name: noted-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: noted_db
-      POSTGRES_USER: noted_user
-      POSTGRES_PASSWORD: noted_user_0822_1653
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - noted_pgdata:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: noted-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq
+      - rabbitmq-log:/var/log/rabbitmq
+
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."
 
 volumes:
   noted_pgdata:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
