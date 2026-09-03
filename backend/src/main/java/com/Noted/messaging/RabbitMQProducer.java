@@ -1,5 +1,6 @@
 package com.Noted.messaging;
 
+import com.Noted.dto.SummaryJobMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,8 @@ public class RabbitMQProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendMessage(Long jobId){
-        rabbitTemplate.convertAndSend("summary-exchange", "routing-key", jobId);
+    public void sendMessage(Long jobId, String noteText){
+        SummaryJobMessage message = new SummaryJobMessage(jobId, noteText);
+        rabbitTemplate.convertAndSend("summary-exchange", "routing-key", message);
     }
 }

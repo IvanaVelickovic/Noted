@@ -29,7 +29,7 @@ public class SummaryJobService {
         job.setStatus(SummaryJobStatus.PENDING);
         job = summaryJobRepository.save(job);
 
-        rabbitMQProducer.sendMessage(job.getId());
+        rabbitMQProducer.sendMessage(job.getId(), note.getBody());
 
         return job;
     }
