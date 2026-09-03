@@ -1,25 +1,26 @@
 package com.Noted.controller;
 
-import com.Noted.messaging.RabbitMQProducer;
+import com.Noted.model.SummaryJob;
+import com.Noted.response.SummaryJobResponse;
+import com.Noted.service.SummaryJobService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/jobs")
 public class JobController {
+    private final SummaryJobService summaryJobService;
 
-    private final RabbitMQProducer rabbitMQProducer;
-
-    public JobController(RabbitMQProducer rabbitMQProducer) {
-        this.rabbitMQProducer = rabbitMQProducer;
+    public JobController(SummaryJobService summaryJobService) {
+        this.summaryJobService = summaryJobService;
     }
 
-    @PostMapping("/test/{message}")
-    public ResponseEntity<Void> testJobMessaging(@PathVariable String message){
-        rabbitMQProducer.sendMessage(message);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<SummaryJobResponse> getJob(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                     @PathVariable Long id){
+        SummaryJob job = summaryJobService.getSummaryJobById(authHeader.substring(7), id);
+        return ResponseEntity.ok(SummaryJobResponse.fromEntity(job));
+
     }
 }

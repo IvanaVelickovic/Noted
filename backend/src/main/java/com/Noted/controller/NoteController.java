@@ -2,8 +2,10 @@ package com.Noted.controller;
 
 import com.Noted.dto.CreateNote;
 import com.Noted.model.Note;
+import com.Noted.model.SummaryJob;
 import com.Noted.response.NoteBasicInfo;
 import com.Noted.response.NoteResponse;
+import com.Noted.response.SummaryJobCreatedResponse;
 import com.Noted.service.NoteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -81,6 +83,15 @@ public class NoteController {
         List<NoteBasicInfo> notes = noteService.getAllNotesByQuery(authHeader.substring(7), query, categoryId);
 
         return ResponseEntity.ok(notes);
+    }
 
+    @PostMapping("/{noteId}/summarize")
+    public ResponseEntity<SummaryJobCreatedResponse> summarizeNote(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                                   @PathVariable Long noteId){
+        SummaryJob summaryJob = noteService.summarizeNote(authHeader.substring(7), noteId);
+
+        return  ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(SummaryJobCreatedResponse.fromEntity(summaryJob));
     }
 }

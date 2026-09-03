@@ -3,6 +3,7 @@ package com.Noted.service;
 import com.Noted.dto.CreateNote;
 import com.Noted.exception.NoteNotFoundException;
 import com.Noted.model.Note;
+import com.Noted.model.SummaryJob;
 import com.Noted.model.User;
 import com.Noted.repository.NoteRepository;
 import com.Noted.response.NoteBasicInfo;
@@ -18,11 +19,13 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final SummaryJobService summaryJobService;
 
-    public NoteService(NoteRepository noteRepository, UserService userService, CategoryService categoryService){
+    public NoteService(NoteRepository noteRepository, UserService userService, CategoryService categoryService, SummaryJobService summaryJobService){
         this.noteRepository = noteRepository;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.summaryJobService = summaryJobService;
     }
 
     public Note createNote(CreateNote createNote, String token){
@@ -120,5 +123,12 @@ public class NoteService {
                         (note.getCategory() != null && note.getCategory().getId().equals(categoryId)))
                 .map(NoteBasicInfo::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public SummaryJob summarizeNote(String token, Long noteId){
+        User user = userService.getUserFromToken(token);
+        Note note = getNoteById(token, noteId);
+
+        return summaryJobService.createAndDispatch(user, note);
     }
 }
