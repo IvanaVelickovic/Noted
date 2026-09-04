@@ -9,6 +9,8 @@ import com.Noted.model.enums.SummaryJobStatus;
 import com.Noted.repository.SummaryJobRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SummaryJobService {
     private final SummaryJobRepository summaryJobRepository;
@@ -45,6 +47,26 @@ public class SummaryJobService {
         }
 
         return job;
+    }
 
+    public void retryJob(SummaryJob job, String causeMessage){
+        int retryCount = job.getRetryCount() + 1;
+        job.setRetryCount(retryCount);
+
+        if(retryCount <= 3){
+            job.setStatus(SummaryJobStatus.PROCESSING);
+            job.setErrorMessage(String.format("Attempt %d of 3 failed (%s). Retrying shortly...", retryCount, causeMessage));
+            summaryJobRepository.save(job);
+
+            rabbitMQProducer.sendMessage(job.getId(), job.getNote().getBody());
+        } else {
+            job.setStatus(SummaryJobStatus.FAILED);
+            job.setErrorMessage("Failed to summarize note after 3 attempts due to AI service unavailability. Please try again later.");
+            summaryJobRepository.save(job);
+        }
+    }
+
+    public List<SummaryJob> getAllJobsByNote(Note note){
+        return summaryJobRepository.findAllByNoteOrderByCreatedAtDesc(note);
     }
 }

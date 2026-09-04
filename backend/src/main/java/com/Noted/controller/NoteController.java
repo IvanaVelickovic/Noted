@@ -6,6 +6,7 @@ import com.Noted.model.SummaryJob;
 import com.Noted.response.NoteBasicInfo;
 import com.Noted.response.NoteResponse;
 import com.Noted.response.SummaryJobCreatedResponse;
+import com.Noted.response.SummaryJobResponse;
 import com.Noted.service.NoteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -93,5 +94,13 @@ public class NoteController {
         return  ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(SummaryJobCreatedResponse.fromEntity(summaryJob));
+    }
+
+    @GetMapping("/{noteId}/summary-history")
+    public ResponseEntity<List<SummaryJobResponse>> getNoteSummaryHistory(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                                    @PathVariable Long noteId){
+        List<SummaryJobResponse> responses = noteService.getNoteSummaryHistory(authHeader.substring(7), noteId);
+
+        return ResponseEntity.ok(responses);
     }
 }

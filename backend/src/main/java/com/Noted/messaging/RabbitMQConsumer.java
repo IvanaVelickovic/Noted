@@ -6,18 +6,24 @@ import com.Noted.exception.JobNotFoundException;
 import com.Noted.model.SummaryJob;
 import com.Noted.model.enums.SummaryJobStatus;
 import com.Noted.repository.SummaryJobRepository;
+import com.Noted.service.SummaryJobService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Component
 public class RabbitMQConsumer {
 
     private final SummaryJobRepository summaryJobRepository;
     private final SummarizationClient summarizationClient;
+    private final SummaryJobService summaryJobService;
 
-    public RabbitMQConsumer(SummaryJobRepository summaryJobRepository, SummarizationClient summarizationClient) {
+    public RabbitMQConsumer(SummaryJobRepository summaryJobRepository, SummarizationClient summarizationClient, SummaryJobService summaryJobService) {
         this.summaryJobRepository = summaryJobRepository;
         this.summarizationClient = summarizationClient;
+        this.summaryJobService = summaryJobService;
     }
 
     @RabbitListener(queues = "summary-job-queue")
@@ -34,11 +40,15 @@ public class RabbitMQConsumer {
             String result = summarizationClient.summarize(noteText);
             job.setResult(result);
             job.setStatus(SummaryJobStatus.COMPLETED);
-        } catch (Exception e){
-            job.setStatus(SummaryJobStatus.FAILED);
-            job.setErrorMessage(e.getMessage());
+            job.setErrorMessage(null);
+            summaryJobRepository.save(job);
+        } catch (ResourceAccessException e){
+            summaryJobService.retryJob(job, "AI service timeout");
+        } catch (HttpClientErrorException | HttpServerErrorException e){
+            summaryJobService.retryJob(job, "API Error " + e.getStatusCode());
         }
-
-        summaryJobRepository.save(job);
+        catch (Exception e){
+            summaryJobService.retryJob(job, e.getMessage());
+        }
     }
 }

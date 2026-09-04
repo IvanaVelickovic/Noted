@@ -7,6 +7,7 @@ import com.Noted.model.SummaryJob;
 import com.Noted.model.User;
 import com.Noted.repository.NoteRepository;
 import com.Noted.response.NoteBasicInfo;
+import com.Noted.response.SummaryJobResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -130,5 +131,16 @@ public class NoteService {
         Note note = getNoteById(token, noteId);
 
         return summaryJobService.createAndDispatch(user, note);
+    }
+
+    public List<SummaryJobResponse> getNoteSummaryHistory(String token, Long noteId){
+        userService.getUserFromToken(token);
+        Note note = getNoteById(token, noteId);
+
+        List<SummaryJob> jobs = summaryJobService.getAllJobsByNote(note);
+
+        return jobs.stream()
+                .map(SummaryJobResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }
