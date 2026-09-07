@@ -1,6 +1,7 @@
 package com.Noted.service;
 
 import com.Noted.exception.JobNotFoundException;
+import com.Noted.exception.SummarizationLimitReached;
 import com.Noted.messaging.RabbitMQProducer;
 import com.Noted.model.Note;
 import com.Noted.model.SummaryJob;
@@ -9,6 +10,7 @@ import com.Noted.model.enums.SummaryJobStatus;
 import com.Noted.repository.SummaryJobRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -16,14 +18,20 @@ public class SummaryJobService {
     private final SummaryJobRepository summaryJobRepository;
     private final RabbitMQProducer rabbitMQProducer;
     private final UserService userService;
+    private final RateLimitService rateLimitService;
 
-    public SummaryJobService(SummaryJobRepository summaryJobRepository, RabbitMQProducer rabbitMQProducer, UserService userService) {
+    public SummaryJobService(SummaryJobRepository summaryJobRepository, RabbitMQProducer rabbitMQProducer, UserService userService, RateLimitService rateLimitService) {
         this.summaryJobRepository = summaryJobRepository;
         this.rabbitMQProducer = rabbitMQProducer;
         this.userService = userService;
+        this.rateLimitService = rateLimitService;
     }
 
     public SummaryJob createAndDispatch(User user, Note note){
+        if(!rateLimitService.isAllowed(user.getId(), 5, Duration.ofHours(24))){
+            throw new SummarizationLimitReached("You reached the daily limit of 5 summarizations.");
+        }
+
         SummaryJob job = new SummaryJob();
 
         job.setUser(user);

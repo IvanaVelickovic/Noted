@@ -7,12 +7,14 @@ import com.Noted.model.SummaryJob;
 import com.Noted.model.enums.SummaryJobStatus;
 import com.Noted.repository.SummaryJobRepository;
 import com.Noted.service.SummaryJobService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
+@Slf4j
 @Component
 public class RabbitMQConsumer {
 
@@ -31,8 +33,15 @@ public class RabbitMQConsumer {
         Long summaryJobId = message.jobId();
         String noteText = message.noteText();
 
-        SummaryJob job = summaryJobRepository.findById(summaryJobId)
-                .orElseThrow(() -> new JobNotFoundException("Couldn't find job with id: " + summaryJobId));
+        SummaryJob job;
+        try {
+            job = summaryJobRepository.findById(summaryJobId)
+                    .orElseThrow(() -> new JobNotFoundException("Couldn't find job with id: " + summaryJobId));
+        } catch (JobNotFoundException e) {
+            log.warn("Received message for non-existent job {}, discarding", message.jobId());
+            return;
+        }
+
         job.setStatus(SummaryJobStatus.PROCESSING);
         summaryJobRepository.save(job);
 
