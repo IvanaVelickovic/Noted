@@ -1,14 +1,26 @@
 import { Link } from "react-router-dom";
 import Button from "./Button";
+import { useAuthForm } from "../hooks/useAuthForm";
 
 type AuthCardProps = {
   authType: "login" | "register";
 };
 
 function AuthCard({ authType }: AuthCardProps) {
+  const { formData, handleChange, handleSubmit, error, loading } =
+    useAuthForm(authType);
+
   return (
-    <div className="bg-white p-5 rounded-lg flex flex-col items-center w-[28%]">
-      <h1 className="text-button-bg font-display text-3xl my-3.5">Noted.</h1>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-5 rounded-lg flex flex-col items-center w-[28%]"
+    >
+      <Link
+        to="/"
+        className="text-button-bg font-display text-3xl my-3.5 cursor-pointer"
+      >
+        Noted.
+      </Link>
 
       <div className="flex flex-col items-center gap-y-1 py-1.5">
         <h2 className="text-header text-[1.6rem] font-display">
@@ -33,6 +45,8 @@ function AuthCard({ authType }: AuthCardProps) {
           <input
             className="border w-full h-10 block px-2 rounded text-header/50 bg-input-bg border-input-border"
             id="name"
+            value={formData.name}
+            onChange={handleChange}
             type="text"
             placeholder="Your name"
           ></input>
@@ -49,8 +63,11 @@ function AuthCard({ authType }: AuthCardProps) {
           <input
             className="border w-full h-10 block px-2 rounded text-header/50 bg-input-bg border-input-border"
             id="email"
+            value={formData.email}
+            onChange={handleChange}
             type="email"
             placeholder="you@example.com"
+            required
           ></input>
         </div>
 
@@ -65,8 +82,13 @@ function AuthCard({ authType }: AuthCardProps) {
           <input
             className="border w-full h-10 block px-2 rounded text-header/50 bg-input-bg border-input-border"
             id="password"
+            value={formData.password}
+            onChange={handleChange}
             type="password"
             placeholder="••••••••"
+            minLength={8}
+            maxLength={30}
+            required
           ></input>
         </div>
 
@@ -81,14 +103,25 @@ function AuthCard({ authType }: AuthCardProps) {
           <input
             className="border w-full h-10 block px-2 rounded text-header/50 bg-input-bg border-input-border"
             id="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
             type="password"
             placeholder="••••••••"
+            minLength={8}
+            maxLength={30}
           ></input>
         </div>
 
         {/* BUTTON AND FOOTER */}
+        {error && (
+          <p className="text-red-600 text-sm mt-2 mb-0">Error: {error}</p>
+        )}
         <Button className="w-full my-4">
-          {authType == "login" ? "Sign in" : "Create account"}
+          {loading
+            ? "Loading..."
+            : authType === "login"
+              ? "Sign in"
+              : "Create account"}
         </Button>
         <div className="flex gap-x-1 text-[0.9rem]">
           <p className="text-paragraph-light">
@@ -103,7 +136,7 @@ function AuthCard({ authType }: AuthCardProps) {
           </Link>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
