@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import Button from "./Button";
+import Button from "../components/Button";
+import { useNavigate } from "react-router-dom";
 
 const TITLE = "Noted.";
 
 function LandingPage() {
   const [displayed, setDisplayed] = useState("");
-  const [titleDone, setTitleDone] = useState(false);
+  const [, setTitleDone] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     let i = 0;
@@ -43,12 +46,16 @@ function LandingPage() {
             className={`w-full flex gap-x-3 justify-center ${showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2.5"}
             transition-[opacity,transform] duration-600 ease-in-out`}
           >
-            <Button className="text-base transition-all duration-200 ease-in-out hover:-translate-y-0.5">
+            <Button
+              className="text-base transition-all duration-200 ease-in-out hover:-translate-y-0.5"
+              onClick={() => navigate("/login")}
+            >
               Log in
             </Button>
             <Button
               variant="secondary"
               className="text-base transition-all duration-200 ease-in-out hover:-translate-y-0.5"
+              onClick={() => navigate("/register")}
             >
               Create account
             </Button>

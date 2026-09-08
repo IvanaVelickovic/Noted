@@ -11,8 +11,11 @@ html, body{
   --color-pink-cream: #F6E4D9;
   --color-header: #2C1F1F;
   --color-paragraph: #7A5A62;
+  --color-paragraph-light: #9E7E85;
   --color-button-bg: #C97B96;
   --color-button-hover: #B2627E;
+  --color-input-bg: #FAF6F1;
+  --color-input-border: #DDD0C6;
 
   --font-sans: 'Inter', sans-serif;
   --font-display: 'DM_Serif_Display', serif;
