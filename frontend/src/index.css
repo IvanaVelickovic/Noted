@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+html, body{
+  height: 100%;
+  width: 100%;
+  background-color: #FAF2EC;
+  font-family: 'Inter', sans-serif;
+}
+
+@theme{
+  --color-pink-cream: #F6E4D9;
+  --color-header: #2C1F1F;
+  --color-paragraph: #7A5A62;
+  --color-button-bg: #C97B96;
+  --color-button-hover: #B2627E;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'DM_Serif_Display', serif;
+  --font-mono: 'DM_Mono', serif;
+}
+
+@font-face{
+  font-family: 'Inter';
+  src: url('./assets/fonts/Inter/static/Inter_18pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face{
+  font-family: 'DM_Serif_Display';
+  src: url('./assets/fonts/DM_Serif_Display/DMSerifDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face{
+  font-family: 'DM_Mono';
+  src: url('./assets/fonts/DM_Mono/DMMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
