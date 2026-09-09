@@ -16,6 +16,9 @@ html, body{
   --color-button-hover: #B2627E;
   --color-input-bg: #FAF6F1;
   --color-input-border: #DDD0C6;
+  --color-date-notes: #C4A8B0;
+  --color-note-fill: #E8DDD4;
+  
 
   --font-sans: 'Inter', sans-serif;
   --font-display: 'DM_Serif_Display', serif;

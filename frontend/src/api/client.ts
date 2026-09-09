@@ -74,6 +74,7 @@ api.interceptors.response.use(
             onRefreshed(newAccessToken);
 
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            console.log("retrying original request:", originalRequest.url, originalRequest.headers);
             return api(originalRequest);
         } catch (refreshError){
             pendingRequests = [];
