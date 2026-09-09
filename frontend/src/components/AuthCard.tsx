@@ -113,9 +113,7 @@ function AuthCard({ authType }: AuthCardProps) {
         </div>
 
         {/* BUTTON AND FOOTER */}
-        {error && (
-          <p className="text-red-600 text-sm mt-2 mb-0">Error: {error}</p>
-        )}
+        {error && <p className="text-red-600 text-sm mt-2 mb-0">{error}</p>}
         <Button className="w-full my-4">
           {loading
             ? "Loading..."

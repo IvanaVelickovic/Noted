@@ -41,16 +41,18 @@ export function useAuthForm(authType: "login" | "register"){
                 });
             }
 
-            if (data?.accessToken) {
-                sessionStorage.setItem("noted-access-token", data.accessToken);
+            if(authType == "register"){
+                navigate("/login");
+            } else {
+                sessionStorage.setItem("noted-access-token", data?.accessToken);
+                sessionStorage.setItem("noted-refresh-token", data?.refreshToken);
+                navigate("/notes");
             }
-            if (data?.refreshToken) {
-                sessionStorage.setItem("noted-refresh-token", data.refreshToken);
-            }
-            navigate("/notes");
+
+            
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message ?? "Something went wrong");
+                setError(err.response?.data?.error ?? "Something went wrong");
         } else {
             setError("Something went wrong");
         }
