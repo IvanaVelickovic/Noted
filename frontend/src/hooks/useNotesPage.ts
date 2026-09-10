@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCategories } from "./useCategories";
 import { useNotes } from "./useNotes";
 import { useNote } from "./useNote";
 
 export function useNotesPage(){
     const [selectedNoteId, setSelectedNoteId] = useState<string>("");
+    const initialAutoSelectDone = useRef(false);
 
-    const { categories, loading: loadingCategories, error: errorCategories} = useCategories();
+    const { categories, fetchCategories, loading: loadingCategories, error: errorCategories} = useCategories();
     const { notes, loading: loadingNotes, error: errorNotes} = useNotes(categories);
 
     
     useEffect(() => {
-        if(selectedNoteId === "" && notes.length > 0){
-            console.log("auto-selecting note:", notes[0].id);
+        if(!initialAutoSelectDone.current && notes.length > 0){
             setSelectedNoteId(notes[0].id);
+            initialAutoSelectDone.current = true;
         }
     }, [notes, selectedNoteId])
 
@@ -21,6 +22,7 @@ export function useNotesPage(){
 
     return {
     categories,
+    fetchCategories,
     notes,
     note,
     selectedNoteId,

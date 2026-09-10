@@ -28,6 +28,7 @@ function NotesPage() {
 
   const {
     categories,
+    fetchCategories,
     notes,
     note,
     selectedNoteId,
@@ -39,6 +40,7 @@ function NotesPage() {
     <div className="flex min-h-screen w-full">
       <NotesLeftSideBar
         categories={categories}
+        fetchCategories={fetchCategories}
         notes={notes}
         selectedNoteId={selectedNoteId}
         setSelectedNoteId={setSelectedNoteId}

@@ -1,12 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDate } from "../utils/formatDate";
 import { useLogout } from "../hooks/useLogout";
-import type { Category } from "../api/categories";
+import type { CategoryDetailed } from "../api/categories";
 import type { NoteBasicInfo } from "../api/notes";
 import { getCategoryColor } from "../utils/categoryColors";
+import { useCategoryActions } from "../hooks/useCategoryActions";
+import { useInlineEdit } from "../hooks/useInlineEdit";
 
 type NotesLeftSideBarProps = {
-  categories: Category[];
+  categories: CategoryDetailed[];
+  fetchCategories: () => Promise<void>;
   notes: NoteBasicInfo[];
   selectedNoteId: string;
   setSelectedNoteId: React.Dispatch<React.SetStateAction<string>>;
@@ -16,6 +19,7 @@ type NotesLeftSideBarProps = {
 
 function NotesLeftSideBar({
   categories,
+  fetchCategories,
   notes,
   selectedNoteId,
   setSelectedNoteId,
@@ -27,15 +31,56 @@ function NotesLeftSideBar({
   >(undefined);
   const selectedNoteStyle = " border-l-[3px] border-l-button-bg bg-note-fill ";
   const logout = useLogout();
+  const { createCategory, updateCategory, deleteCategory } =
+    useCategoryActions(fetchCategories);
+  const {
+    editingId,
+    setEditingId,
+    value,
+    setValue,
+    startEditing,
+    cancelEditing,
+  } = useInlineEdit();
 
   const notesByCategory = useMemo(() => {
     if (!selectedCategoryId) return notes;
-    const filteredNotes = notes.filter(
-      (n) => n.categoryId === selectedCategoryId,
-    );
-    setSelectedNoteId(filteredNotes[0].id);
-    return filteredNotes;
+    return notes.filter((n) => n.categoryId === selectedCategoryId);
   }, [notes, selectedCategoryId]);
+
+  useEffect(() => {
+    if (notesByCategory.length > 0) {
+      const isCurrentInList = notesByCategory.some(
+        (n) => n.id === selectedNoteId,
+      );
+      if (!isCurrentInList) {
+        setSelectedNoteId(notesByCategory[0].id);
+      }
+    } else {
+      setSelectedNoteId("");
+    }
+  }, [selectedCategoryId]);
+
+  const commitEdit = async () => {
+    const trimmed = value.trim();
+    if (!trimmed) return cancelEditing();
+
+    try {
+      if (editingId === "__new__") {
+        await createCategory(trimmed);
+      } else if (editingId) {
+        await updateCategory(trimmed, editingId);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      cancelEditing();
+    }
+  };
+
+  const createNewCategory = () => {
+    setEditingId("__new__");
+    setValue("");
+  };
 
   return (
     <div className="w-[24%] flex flex-col border-r-2 border-r-input-border">
@@ -72,7 +117,10 @@ function NotesLeftSideBar({
                     className="font-mono text-sm rounded-lg px-0.5 py-px"
                     style={{ color, backgroundColor: `${color}26` }}
                   >
-                    {categories.find((c) => c.id == note.categoryId)?.name}
+                    {
+                      categories.find((c) => c.categoryId == note.categoryId)
+                        ?.categoryName
+                    }
                   </div>
                   <div className="font-mono text-sm text-date-notes">
                     {formatDate(note.lastEdited)}
@@ -89,7 +137,10 @@ function NotesLeftSideBar({
             <h3 className="text-date-notes font-mono text-[0.92rem]">
               CATEGORIES
             </h3>
-            <button className="text-paragraph-light text-[1.2rem] mr-1.5 cursor-pointer">
+            <button
+              className="text-paragraph-light text-[1.2rem] mr-1.5 cursor-pointer"
+              onClick={createNewCategory}
+            >
               +
             </button>
           </div>
@@ -99,47 +150,96 @@ function NotesLeftSideBar({
               onClick={() => setSelectedCategoryId(undefined)}
             >
               <h5>All notes</h5>
-              {selectedCategoryId == undefined ? (
-                <div className="flex gap-x-0.5">
-                  <img
-                    src="./images/edit_button.png"
-                    className="h-[1.56rem]"
-                  ></img>
-                  <div className="text-[0.94rem] text-button-bg">x</div>
-                </div>
-              ) : (
-                <div></div>
-              )}
             </li>
             {categories.map((category) => {
-              const color = getCategoryColor(category.id, categories);
+              const color = getCategoryColor(category.categoryId, categories);
+              const isEditing = editingId === category.categoryId;
               return (
                 <li
-                  className={`flex items-center justify-between text-paragraph text-sm font-mono px-3 py-0.5 ${selectedCategoryId == category.id ? "bg-note-fill" : ""}`}
-                  key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
+                  className={`flex items-center justify-between text-paragraph text-sm font-mono px-3 py-0.5 ${selectedCategoryId == category.categoryId ? "bg-note-fill" : ""}`}
+                  style={{ color }}
+                  key={category.categoryId}
+                  onClick={() =>
+                    !isEditing && setSelectedCategoryId(category.categoryId)
+                  }
                 >
                   <div className="flex items-center gap-x-1.5">
-                    <span className="text-lg py-0" style={{ color }}>
-                      •
-                    </span>
-                    {category.name}
+                    <span className="text-lg py-0">•</span>
+                    {isEditing ? (
+                      <input
+                        autoFocus
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        onBlur={commitEdit}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") commitEdit();
+                          if (e.key === "Escape") cancelEditing();
+                        }}
+                        onClick={(e) => e.stopPropagation()} // don't trigger categorySelection
+                        className="bg-transparent border-b border-button-bg outline-none flex-1"
+                      />
+                    ) : (
+                      category.categoryName
+                    )}
                   </div>
 
-                  {selectedCategoryId == category.id ? (
+                  {selectedCategoryId == category.categoryId && !isEditing && (
                     <div className="flex gap-x-0.5">
                       <img
                         src="./images/edit_button.png"
                         className="h-[1.56rem]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing(
+                            category.categoryId,
+                            category.categoryName,
+                          );
+                        }}
                       ></img>
-                      <div className="text-[0.94rem] text-button-bg">x</div>
+                      <div
+                        className="text-[0.94rem] text-button-bg"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCategory(category.categoryId);
+                        }}
+                      >
+                        x
+                      </div>
                     </div>
-                  ) : (
-                    <div></div>
                   )}
                 </li>
               );
             })}
+            {editingId === "__new__" && (
+              <li className="flex items-center gap-x-1.5 text-paragraph text-sm font-mono px-3 py-0.5">
+                <span
+                  className="text-lg py-0"
+                  style={{
+                    color: getCategoryColor("new", [
+                      ...categories,
+                      { categoryId: "new" } as CategoryDetailed,
+                    ]),
+                  }}
+                >
+                  •
+                </span>
+                <input
+                  autoFocus
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onBlur={commitEdit}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitEdit();
+                    if (e.key === "Escape") {
+                      setEditingId(null);
+                      setValue("");
+                    }
+                  }}
+                  placeholder="New category"
+                  className="bg-transparent border-b border-button-bg outline-none flex-1"
+                />
+              </li>
+            )}
           </ul>
         </div>
       </div>

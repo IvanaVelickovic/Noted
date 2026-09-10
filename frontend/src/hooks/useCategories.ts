@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { categoriesApi, type Category } from "../api/categories";
+import { categoriesApi, type CategoryDetailed } from "../api/categories";
 
 export function useCategories(){
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<CategoryDetailed[]>([]);
 
     const fetchCategories = useCallback(async () => {
         setLoading(true);
         setError("");
 
         try{
-            const data = await categoriesApi.getAll();
+            const data = await categoriesApi.noteCount();
             setCategories(data);
         } catch(err) {
             setError(axios.isAxiosError(err) ? err.response?.data?.error ?? "Failed to load categories" : "Failed to load categories");
