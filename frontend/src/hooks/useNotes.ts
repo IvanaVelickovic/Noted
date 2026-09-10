@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { notesApi, type NoteBasicInfo } from "../api/notes";
 import axios from "axios";
+import type { Category } from "../api/categories";
 
-export function useNotes(){
+export function useNotes(categories : Category[]){
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [notes, setNotes] = useState<NoteBasicInfo[]>([]);
@@ -19,7 +20,7 @@ export function useNotes(){
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [categories]);
 
     useEffect(() => {
         fetchNotes();
