@@ -5,12 +5,12 @@ export function useLogout(){
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        const refreshToken = sessionStorage.getItem("noted-refresh-token");
+        const refreshToken = localStorage.getItem("noted-refresh-token");
             try{
                 if(refreshToken){
                     await authApi.logout({refreshToken});
-                    sessionStorage.removeItem("noted-access-token");
-                    sessionStorage.removeItem("noted-refresh-token");
+                    localStorage.removeItem("noted-access-token");
+                    localStorage.removeItem("noted-refresh-token");
                     navigate("/");
       
                 }

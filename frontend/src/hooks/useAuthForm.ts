@@ -44,8 +44,8 @@ export function useAuthForm(authType: "login" | "register"){
             if(authType == "register"){
                 navigate("/login");
             } else {
-                sessionStorage.setItem("noted-access-token", data?.accessToken);
-                sessionStorage.setItem("noted-refresh-token", data?.refreshToken);
+                localStorage.setItem("noted-access-token", data?.accessToken);
+                localStorage.setItem("noted-refresh-token", data?.refreshToken);
                 navigate("/notes");
             }
 

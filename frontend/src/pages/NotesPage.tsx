@@ -3,39 +3,30 @@ import api from "../api/client";
 import axios from "axios";
 import NotesLeftSideBar from "../components/NotesLeftSideBar";
 import { useNotesPage } from "../hooks/useNotesPage";
+import NotesEditor from "../components/NotesEditor";
+import { getCategoryColor } from "../utils/categoryColors";
 
 function NotesPage() {
-  const [text, setText] = useState("not working yet");
-
-  useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        const res = await api.get("/me");
-        if (res.status === 200) {
-          setText(`success: ${JSON.stringify(res.data)}`);
-        }
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setText(`failed with status: ${err.response?.status}`);
-        } else {
-          setText("failed: unknown error");
-        }
-      }
-    };
-
-    fetchMe();
-  }, []);
-
   const {
     categories,
     fetchCategories,
     notes,
+    fetchNotes,
     note,
     selectedNoteId,
     setSelectedNoteId,
     loading,
     error,
   } = useNotesPage();
+
+  const selectedNote = notes.find((n) => n.id === selectedNoteId);
+  const selectedCategory = categories.find(
+    (c) => c.categoryId === selectedNote?.categoryId,
+  );
+  const selectedColor = selectedCategory
+    ? getCategoryColor(selectedCategory.categoryId, categories)
+    : undefined;
+
   return (
     <div className="flex min-h-screen w-full">
       <NotesLeftSideBar
@@ -45,7 +36,12 @@ function NotesPage() {
         selectedNoteId={selectedNoteId}
         setSelectedNoteId={setSelectedNoteId}
       ></NotesLeftSideBar>
-      <div>{note?.title}</div>
+      <NotesEditor
+        note={note}
+        category={selectedCategory}
+        color={selectedColor}
+        fetchNotes={fetchNotes}
+      />
     </div>
   );
 }

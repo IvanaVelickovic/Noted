@@ -8,7 +8,7 @@ export function useNotesPage(){
     const initialAutoSelectDone = useRef(false);
 
     const { categories, fetchCategories, loading: loadingCategories, error: errorCategories} = useCategories();
-    const { notes, loading: loadingNotes, error: errorNotes} = useNotes(categories);
+    const { notes, loading: loadingNotes, error: errorNotes, fetchNotes} = useNotes(categories);
 
     
     useEffect(() => {
@@ -24,6 +24,7 @@ export function useNotesPage(){
     categories,
     fetchCategories,
     notes,
+    fetchNotes,
     note,
     selectedNoteId,
     setSelectedNoteId,

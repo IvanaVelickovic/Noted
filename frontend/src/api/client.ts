@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const accessToken = sessionStorage.getItem("noted-access-token");
+    const accessToken = localStorage.getItem("noted-access-token");
 
     if(accessToken){
         config.headers.Authorization = `Bearer ${accessToken}`;
@@ -26,8 +26,8 @@ function onRefreshed(newToken: string) {
 }
 
 function clearAuthAndRedirect() {
-    sessionStorage.removeItem("noted-access-token");
-    sessionStorage.removeItem("noted-refresh-token");
+    localStorage.removeItem("noted-access-token");
+    localStorage.removeItem("noted-refresh-token");
     window.location.href = "/login";
 }
 
@@ -44,7 +44,7 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        const refreshToken = sessionStorage.getItem("noted-refresh-token");
+        const refreshToken = localStorage.getItem("noted-refresh-token");
         if(!refreshToken){
             clearAuthAndRedirect();
             return Promise.reject(error);
@@ -68,8 +68,8 @@ api.interceptors.response.use(
             const newAccessToken = res.data.accessToken;
 
             console.log("new token saved:", newAccessToken);
-            sessionStorage.setItem("noted-access-token", newAccessToken);
-            console.log("token in storage now:", sessionStorage.getItem("noted-access-token"));
+            localStorage.setItem("noted-access-token", newAccessToken);
+            console.log("token in storage now:", localStorage.getItem("noted-access-token"));
             
             onRefreshed(newAccessToken);
 
