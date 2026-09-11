@@ -9,7 +9,7 @@ export function useNoteActions(refetchNotes: () => Promise<void>){
 
             console.log("successfully added a new note with id: " + noteBasicInfo.id);
             await refetchNotes();
-            
+            return noteBasicInfo.id;
         } catch(err) {
             throw axios.isAxiosError(err)
             ? new Error(err.response?.data.error ?? "Failed to create note")
@@ -19,6 +19,7 @@ export function useNoteActions(refetchNotes: () => Promise<void>){
 
     const updateNote = useCallback(async (title: string, body: string, noteId: string, categoryId?: string) => {
         try {
+            if (categoryId === "") categoryId = undefined;
             await notesApi.update({ title, body, categoryId }, noteId);
             console.log("successfully updated a note");
             await refetchNotes();

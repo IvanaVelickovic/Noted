@@ -6,11 +6,13 @@ import type { CategoryDetailed } from "../api/categories";
 import type { NoteBasicInfo } from "../api/notes";
 import NotesList from "./NotesList";
 import CategoriesList from "./CategoriesList";
+import { useNoteActions } from "../hooks/useNoteActions";
 
 type NotesLeftSideBarProps = {
   categories: CategoryDetailed[];
   fetchCategories: () => Promise<void>;
   notes: NoteBasicInfo[];
+  fetchNotes: () => Promise<void>;
   selectedNoteId: string;
   setSelectedNoteId: React.Dispatch<React.SetStateAction<string>>;
   loading?: string;
@@ -21,6 +23,7 @@ function NotesLeftSideBar({
   categories,
   fetchCategories,
   notes,
+  fetchNotes,
   selectedNoteId,
   setSelectedNoteId,
   loading,
@@ -41,6 +44,8 @@ function NotesLeftSideBar({
     startEditing,
     cancelEditing,
   } = useInlineEdit();
+
+  const { createNote } = useNoteActions(fetchNotes);
 
   const notesByCategory = useMemo(() => {
     if (!selectedCategoryId) return notes;
@@ -82,6 +87,11 @@ function NotesLeftSideBar({
     setValue("");
   };
 
+  const addNewNote = async () => {
+    const newNoteId = await createNote("Untitled note", "Start writing...");
+    setSelectedNoteId(newNoteId);
+  };
+
   return (
     <div className="w-[24%] flex flex-col border-r-2 border-r-input-border">
       {/* HEADER */}
@@ -94,7 +104,11 @@ function NotesLeftSideBar({
             onClick={logout}
             alt="logout"
           />
-          <img src="./images/add_button.png" className="cursor-pointer" />
+          <img
+            src="./images/add_button.png"
+            className="cursor-pointer"
+            onClick={() => addNewNote()}
+          />
         </div>
       </div>
 

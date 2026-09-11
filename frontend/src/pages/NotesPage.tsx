@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import api from "../api/client";
-import axios from "axios";
 import NotesLeftSideBar from "../components/NotesLeftSideBar";
 import { useNotesPage } from "../hooks/useNotesPage";
 import NotesEditor from "../components/NotesEditor";
@@ -28,21 +25,29 @@ function NotesPage() {
     : undefined;
 
   return (
-    <div className="flex min-h-screen w-full">
-      <NotesLeftSideBar
-        categories={categories}
-        fetchCategories={fetchCategories}
-        notes={notes}
-        selectedNoteId={selectedNoteId}
-        setSelectedNoteId={setSelectedNoteId}
-      ></NotesLeftSideBar>
-      <NotesEditor
-        note={note}
-        category={selectedCategory}
-        color={selectedColor}
-        fetchNotes={fetchNotes}
-      />
-    </div>
+    <>
+      {loading && <div>Loading...</div>}
+      {error && <div className="text-red-500">Error: {error}</div>}
+      {!error && !loading && (
+        <div className="flex min-h-screen w-full">
+          <NotesLeftSideBar
+            categories={categories}
+            fetchCategories={fetchCategories}
+            notes={notes}
+            fetchNotes={fetchNotes}
+            selectedNoteId={selectedNoteId}
+            setSelectedNoteId={setSelectedNoteId}
+          ></NotesLeftSideBar>
+          <NotesEditor
+            note={note}
+            category={selectedCategory}
+            categories={categories}
+            color={selectedColor}
+            fetchNotes={fetchNotes}
+          />
+        </div>
+      )}
+    </>
   );
 }
 

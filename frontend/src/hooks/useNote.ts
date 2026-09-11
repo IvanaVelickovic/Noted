@@ -19,8 +19,15 @@ export function useNote(notes : NoteBasicInfo[], selectedId : string){
             const data = await notesApi.get(selectedId);
             console.log("fetched note:", data); 
             setNote(data ?? undefined);
+            setError("");
         } catch(err) {
-            setError(axios.isAxiosError(err) ? err.response?.data?.error ?? "Failed to load current note" : "Failed to load current note");
+            if (axios.isAxiosError(err) && err.response?.status === 404){
+                setNote(undefined);
+                setError("");
+            } else{
+                setError(axios.isAxiosError(err) ? err.response?.data?.error ?? "Failed to load current note" : "Failed to load current note");
+            }
+            
         } finally {
             setLoading(false);
         }
