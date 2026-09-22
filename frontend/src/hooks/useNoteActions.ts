@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import axios from "axios";
 import { notesApi } from "../api/notes";
 
-export function useNoteActions(refetchNotes: () => Promise<void>){
+export function useNoteActions(refetchNotes: () => Promise<void>, refetchCategories?: () => Promise<void>){
     const createNote = useCallback(async (title: string, body: string) => {
         try{
             const noteBasicInfo = await notesApi.create({ title, body });
@@ -23,7 +23,9 @@ export function useNoteActions(refetchNotes: () => Promise<void>){
             await notesApi.update({ title, body, categoryId }, noteId);
             console.log("successfully updated a note");
             await refetchNotes();
-
+            if (refetchCategories){
+                await refetchCategories();
+            }
         } catch(err){
             throw axios.isAxiosError(err)
             ? new Error(err.response?.data.error ?? "Failed to update note")

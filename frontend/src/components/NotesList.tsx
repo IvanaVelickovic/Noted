@@ -26,7 +26,7 @@ function NotesList({
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
-    <ul className="flex flex-col my-1 overflow-y-auto overflow-x-hidden max-h-116 cursor-pointer">
+    <ul className="flex flex-col my-1 overflow-y-auto overflow-x-hidden max-h-112 cursor-pointer">
       {notes.map((note) => {
         const color = getCategoryColor(note.categoryId, categories);
         return (

@@ -44,6 +44,7 @@ function NotesPage() {
             categories={categories}
             color={selectedColor}
             fetchNotes={fetchNotes}
+            fetchCategories={fetchCategories}
           />
         </div>
       )}

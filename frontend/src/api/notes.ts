@@ -31,5 +31,6 @@ export const notesApi = {
         api.put(`/notes/update/${id}`, payload).then((res) => res.data),
     delete: (id: string) =>
         api.delete(`/notes/delete/${id}`).then((res) => res.data),
-    
+    summarize : (id: string) => 
+        api.post<{ jobId: string }>(`/notes/${id}/summarize`).then((res) => res.data)
 }
