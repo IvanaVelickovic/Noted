@@ -1,0 +1,505 @@
+{
+  "info": {
+    "_postman_id": "be7f9e40-f146-4506-8255-518a5b462e7c",
+    "name": "Noted Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50633335",
+    "_collection_link": "https://go.postman.co/collection/50633335-be7f9e40-f146-4506-8255-518a5b462e7c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"myemail3@gmail.com\",\r\n    \"name\": \"audreyj\",\r\n    \"password\": \"password\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/register",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"myemail@gmail.com\",\r\n    \"password\": \"password\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:8080/login",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Me",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh",
+      "request": {
+        "method": "POST",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/auth/logout",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Note",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4NzkzMzIyNiwiZXhwIjoxNzg3OTM0MTI2fQ.mD_Wu2IGpnCKQlTrpPp-V9hMcsK-5dvUknvvpnPDR6I",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"My first note\",\r\n    \"body\" : \"This is the first note I have ever written.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/create-note",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "create-note"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Notes",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Nzk0MjcxMiwiZXhwIjoxNzg3OTQzNjEyfQ.o8aR_bzYpKRsFmcmijni2oWpwfnGzoEo99nfsxcmNPw",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/notes/get-all",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "get-all"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Note By Id",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Update Note",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsMkBnbWFpbC5jb20iLCJ1c2VySWQiOjIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODc5NDU4MzMsImV4cCI6MTc4Nzk0NjczM30.dC0H5hIjx3040JuZKtlZAsqJO59DV4dBbEQp2BUGWJs",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"New title\",\r\n    \"body\": \"New body\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/notes/update/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "update",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Note",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODEwMjY1NCwiZXhwIjoxNzg4MTAzNTU0fQ.v09_zDb4FCLRYk-CP-zK1seRPCUZ_KyiIQrLgnX5PN0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/notes/delete/3",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "delete",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Note Summarize",
+      "request": {
+        "method": "POST",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Add Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODEwMjY1NCwiZXhwIjoxNzg4MTAzNTU0fQ.v09_zDb4FCLRYk-CP-zK1seRPCUZ_KyiIQrLgnX5PN0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/category/add",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Categories",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsMkBnbWFpbC5jb20iLCJ1c2VySWQiOjIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODgxMDcwMjUsImV4cCI6MTc4ODEwNzkyNX0.lXXFn_p2flZO7cO1rLdHwKf_LfZHiy0jrv3Zvry32iQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/category/get-all",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "get-all"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsMkBnbWFpbC5jb20iLCJ1c2VySWQiOjIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODgxMDcwMjUsImV4cCI6MTc4ODEwNzkyNX0.lXXFn_p2flZO7cO1rLdHwKf_LfZHiy0jrv3Zvry32iQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/category/update/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "update",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODExMjI2OSwiZXhwIjoxNzg4MTEzMTY5fQ.CIt4zsKSm9HW0KV8M_X1I6pG8L6YHJGdlgwWGMfpEPo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/category/delete/2",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "delete",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All By Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsMkBnbWFpbC5jb20iLCJ1c2VySWQiOjIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODgxMTQ2MjEsImV4cCI6MTc4ODExNTUyMX0.rHU-0y0ICSpYDZnxgxPnSxjdiLDWImudw1B8BXN8Vbk",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/notes/5/category",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "5",
+            "category"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Note Count By Category",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Note Search",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODE4OTA2MSwiZXhwIjoxNzg4MTg5OTYxfQ.YBtXRld1vNFUPTH28MgLWQtq33P41eZ2rhqRxiOI8uU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/notes/search?query=new",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": "new"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Job By Id",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODQ0NTkxMSwiZXhwIjoxNzg4NDQ2ODExfQ.zvoVWnV4YDEkANj0l3d8J_hO32E13ZM-21nFZZzcG2c",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/jobs/5",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "jobs",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Summarize Jobs By Note Id",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWVtYWlsQGdtYWlsLmNvbSIsInVzZXJJZCI6MSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4ODUyOTY0OSwiZXhwIjoxNzg4NTMwNTQ5fQ.eFl6u-LKR1tHJ1_wA5pTZYFSATQAJiyFBfYVsFi9cy4",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/notes/30/summary-history",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "notes",
+            "30",
+            "summary-history"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
