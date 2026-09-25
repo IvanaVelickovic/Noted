@@ -39,7 +39,7 @@ Testing was done with SpringBootTest, after each crucial component of the app wa
 As previously said, frontend was developed more as a visual representation of the implemented backend features. Some features were left out, like search and the ability to see a note's summarization history. Frontend was implemented using React and Typescript, with TailwindCSS for styling.
   
 ### Frontend screenshots
-![Landing page](screenshots/notes_landing_page.png)  
+![Landing page](screenshots/noted_landing_page.png)  
 ![Create account](screenshots/create_account.png)  
 ![Notes page](screenshots/notes_page.png)  
 
